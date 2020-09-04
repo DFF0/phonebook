@@ -1,0 +1,104 @@
+﻿* {
+	margin: 0;
+	padding: 0;
+}
+body {
+	background-color: #1D1D1D;
+}
+
+.login-content {
+	width: 420px;
+	margin: 50px auto;
+	padding: 30px 30px 15px;
+	background-color: #FFFFFF;
+	-moz-box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.3);
+	-webkit-box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.3);
+	box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.3);
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-ms-border-radius: 3px;
+	border-radius: 3px;
+	font-size: 16px;
+	max-width: 94%;
+}
+
+.login-content h2 {
+	text-align: center;
+}
+
+.main-header {
+	padding: 10px;
+	border-bottom: solid 1px #e3e1e1;
+}
+.pull-right {
+	text-align: right;
+}
+
+.main-content {
+	width: 620px;
+	margin: 50px auto;
+	padding: 5px 30px 15px;
+	background-color: #FFFFFF;
+	-moz-box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.3);
+	-webkit-box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.3);
+	box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.3);
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-ms-border-radius: 3px;
+	border-radius: 3px;
+	font-size: 16px;
+	max-width: 94%;
+}
+
+.main-content > div {
+	margin: 5px 0px;
+}
+
+.input-group-addon {
+	padding: 6px 12px;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 20px;
+	color: #555;
+	text-align: center;
+	background-color: #eee;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+
+	white-space: nowrap;
+	vertical-align: middle;
+
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+
+	border-right: 0;
+}
+
+.btn-success.btn-outline {
+	color: #029b17;
+	background-color: transparent;
+	border-color: #028213;
+}
+
+.btn-success.btn-outline:hover, .btn-success.btn-outline.active {
+	color: #FFF;
+	background-color: #029b17;
+	border-color: #028213;
+}
+
+.btn-info.btn-outline {
+	color: #5bc0de;
+	background-color: transparent;
+	border-color: #46b8da;
+}
+
+.btn-info.btn-outline:hover, .btn-info.btn-outline.active {
+	color: #FFF;
+	background-color: #5bc0de;
+	border-color: #46b8da;
+}
+
+.info-block {
+	padding-top: 10px;
+	border-top: solid 1px #e3e1e1;
+}
