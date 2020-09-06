@@ -23,10 +23,19 @@ class PhonebookController extends Controller
         if ( !$phonebookResult['success'] ) {
             $_SESSION['message_red'] = $phonebookResult['error']['message'];
         } else {
+            foreach ($phonebookResult['data'] as &$row) {
+                $row['text_number'] = $phonebook->numberToString($row['phone']);
+            }
+
             $this->data['phonebookList'] = $phonebookResult['data'];
         }
 
         $this->view('index');
+    }
+
+    public function createAJAXAction()
+    {
+
     }
 
     public function createAction()
@@ -57,13 +66,21 @@ class PhonebookController extends Controller
         /** @var Phonebook $phonebook */
         $phonebook = $this->model('Phonebook');
 
+        $resultAddImg = $phonebook->saveFile($_FILES['uploadfile']);
+
+        if ( !$resultAddImg['success'] ) {
+            $_SESSION['message_red'] = $resultAddImg['error']['message'];
+            header('Location: /phonebook/');
+            exit;
+        }
+
         $resultAdd = $phonebook->create(
             [
                 'email' => $_POST['email'],
                 'phone' => $_POST['phone'],
                 'name' => $_POST['name'],
                 'surname' => $_POST['surname'],
-                'img' => '',
+                'img' => $resultAddImg['data'],
                 'user_id' => $_SESSION['user_auth']['id'],
             ]
         );

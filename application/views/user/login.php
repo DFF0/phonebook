@@ -8,8 +8,10 @@
             <input type="password" placeholder="Пароль" name="password" class="form-control latin-number-only" maxlength="55" required>
         </div>
         <div class="form-group">
-            <span class="input-group-addon"><?=$this->data['captcha']?></span>
-            <input type="text" placeholder="Капча" name="captcha" class="form-control number-only-ex" required>
+            <div class="input-group">
+                <span class="input-group-addon"><?=$this->data['captcha']?></span>
+                <input type="text" placeholder="Капча" name="captcha" class="form-control number-only-ex" required>
+            </div>
         </div>
         <div id="err"></div>
         <div class="form-group">

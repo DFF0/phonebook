@@ -6,70 +6,90 @@ define('FILE_PATH', APP_PATH.'../user_image/');
 class Phonebook extends Model
 {
     /**
-     * получает .wav файлы из папки
+     * транслитерация текста
+     * @param $s
+     * @return string
+     */
+    protected function transliterate($s)
+    {
+        $s = (string) $s;
+        $s = strip_tags($s);
+        $s = trim($s);
+        $s = function_exists('mb_strtolower') ? mb_strtolower($s) : strtolower($s);
+        $s = strtr($s, array('а'=>'a','б'=>'b','в'=>'v','г'=>'g','д'=>'d','е'=>'e','ё'=>'e','ж'=>'j','з'=>'z','и'=>'i','й'=>'y','к'=>'k','л'=>'l','м'=>'m','н'=>'n','о'=>'o','п'=>'p','р'=>'r','с'=>'s','т'=>'t','у'=>'u','ф'=>'f','х'=>'h','ц'=>'c','ч'=>'ch','ш'=>'sh','щ'=>'shch','ы'=>'y','э'=>'e','ю'=>'yu','я'=>'ya','ъ'=>'','ь'=>''));
+        $s = str_replace(" ", "_", $s);
+
+        return $s;
+    }
+
+    /**
+     * Сохраняет картинку
+     * @param array $file - $_FILES['uploadfile']
      * @return array
      */
-    private function getImg()
+    public function saveFile($file)
     {
-        $pattern = "/\.wav$/";
-        $resultFiles = [];
+        // проверка что файл формата .png или .jpg // можно проверять по $_FILES['uploaded_file'][type]
+        // $pattern = "/\.(png|jpg|jpeg)$/";
+        $pattern = "/\.(png|jpg|jpeg)$/i";
+        if ( !preg_match($pattern, $file['name']) ) {
+            $result = [
+                'success' => false,
+                'error' => [
+                    'message' => 'Ошибка! Файл должен быть .png|jpg|jpeg',
+                ]
+            ];
 
-        $path = $_SESSION["user"]['uk_id'];
-
-        if ( is_dir($this->_fileNotifyPath . "/{$path}") ) {
-            $files = scandir($this->_fileNotifyPath . "/{$path}");
-
-            foreach ($files as $file) {
-                if (preg_match($pattern, $file)) {
-                    $resultFiles[] = $file;
-                }
-            }
+            return $result;
         }
 
-        return $resultFiles;
-    }
+        // проверка размера файла
+        if ( ($file['size'] > MAX_FILE_SIZE) || ($file['size'] == 0)) {
 
-    public function saveFile()
-    {
-        if (isset($_POST['action']) && $_POST['action'] == 'save') {
+            $result = [
+                'success' => false,
+                'error' => [
+                    'message' => "Ошибка! Файл не должен превышать 2 MB",
+                ]
+            ];
 
-            // проверка что файл формата .wav или .mp3 // можно проверять по $_FILES['uploaded_file'][type] => audio/wav
-            // $pattern = "/\.(wav|mp3)$/";
-            $pattern = "/\.(wav)$/";
-            if ( !preg_match($pattern, $_FILES['uploadfile']['name']) ) {
-                $_SESSION['message'] = "Ошибка! Файл должен быть .wav";
-                $this->redirect("/notifysimple/list_file/", 302);
-                return;
-            }
-
-            // проверка размера файла
-            if( ($_FILES['uploadfile']['size'] > MAX_FILE_SIZE) || ($_FILES['uploadfile']['size'] == 0)) {
-                $_SESSION['message'] = "Ошибка! Файл не должен превышать 1 MB";
-                $this->redirect("/notifysimple/list_file/", 302);
-                return;
-            }
-
-            $uploaddir = $this->_fileNotifyPath . "/" . $_SESSION["user"]['uk_id'];
-            if ( !is_dir($uploaddir) ) {
-                mkdir($uploaddir);
-            }
-
-            $fileName = $this->transliterate($_FILES['uploadfile']['name']);
-
-            $uploadfile = $uploaddir."/".basename($fileName);
-
-            if (copy($_FILES['uploadfile']['tmp_name'], $uploadfile)) {
-                $_SESSION['message'] = "Файл '{$fileName}' успешно загружен на сервер";
-            }
-            else {
-                $_SESSION['message'] = "Ошибка! Не удалось загрузить файл на сервер!";
-            }
-
-            $this->redirect("/notifysimple/list_file/", 302);
+            return $result;
         }
+
+        $uploaddir = FILE_PATH . "/" . $_SESSION['user_auth']['id'];
+        if ( !is_dir($uploaddir) ) {
+            mkdir($uploaddir);
+        }
+
+        $fileName = $this->transliterate($file['name']);
+
+        $uploadfile = $uploaddir."/".basename($fileName);
+
+        if ( !copy($file['tmp_name'], $uploadfile) ) {
+            $result = [
+                'success' => false,
+                'error' => [
+                    'message' => "Ошибка! Не удалось загрузить файл на сервер!",
+                ]
+            ];
+
+            return $result;
+        }
+
+        $result = [
+            'success' => true,
+            'data' => $fileName,
+        ];
+
+        return $result;
     }
 
-    protected function numberToString($number)
+    /**
+     * преобразует число в строку
+     * @param  int|string $number
+     * @return string
+     */
+    public function numberToString($number)
     {
         static $dic = [
             [
@@ -113,6 +133,7 @@ class Phonebook extends Model
                 900	=> 'девятьсот',
             ],
             [
+                ['','',''],
                 ['тысяча', 'тысячи', 'тысяч'],
                 ['миллион', 'миллиона', 'миллионов'],
                 ['миллиард', 'миллиарда', 'миллиардов'],
@@ -124,34 +145,19 @@ class Phonebook extends Model
             ]
         ];
 
-        // обозначаем переменную в которую будем писать сгенерированный текст
         $string = [];
 
-        // дополняем число нулями слева до количества цифр кратного трем,
-        // например 1234, преобразуется в 001234
         $number = str_pad($number, ceil(strlen($number)/3)*3, 0, STR_PAD_LEFT);
 
-        // разбиваем число на части из 3 цифр (порядки) и инвертируем порядок частей,
-        // т.к. мы не знаем максимальный порядок числа и будем бежать снизу
-        // единицы, тысячи, миллионы и т.д.
         $parts = array_reverse(str_split($number,3));
 
-        // бежим по каждой части
         foreach ($parts as $i=> $part) {
-
-            // если часть не равна нулю, нам надо преобразовать ее в текст
-            if ($part>0) {
-
-                // обозначаем переменную в которую будем писать составные числа для текущей части
+            if ($part > 0) {
                 $digits = [];
-
-                // если число треххзначное, запоминаем количество сотен
                 if ($part > 99) {
                     $digits[] = floor($part/100)*100;
                 }
 
-                // если последние 2 цифры не равны нулю, продолжаем искать составные числа
-                // (данный блок прокомментирую при необходимости)
                 if ($mod1 = $part%100) {
                     $mod2 = $part%10;
                     $flag = $i==1 && $mod1!=11 && $mod1!=12 && $mod2<3 ? -1 : 1;
@@ -159,27 +165,22 @@ class Phonebook extends Model
                         $digits[] = $flag*$mod1;
                     } else {
                         $digits[] = floor($mod1/10)*10;
-                        $digits[] = $flag*$mod2;
+                        $digits[] = $flag * $mod2;
                     }
                 }
 
-                // берем последнее составное число, для плюрализации
                 $last = abs(end($digits));
 
-                // преобразуем все составные числа в слова
                 foreach ($digits as $j=>$digit) {
                     $digits[$j] = $dic[0][$digit];
                 }
 
-                // добавляем обозначение порядка или валюту
                 $digits[] = $dic[1][$i][(($last%=100)>4 && $last<20) ? 2 : $dic[2][min($last%10,5)]];
 
-                // объединяем составные числа в единый текст и добавляем в переменную, которую вернет функция
                 array_unshift($string, join(' ', $digits));
             }
         }
 
-        // преобразуем переменную в текст и возвращаем из функции, ура!
         return join(' ', $string);
     }
 
