@@ -12,14 +12,16 @@
 	</head>
 	<body>
         <div class="container">
-            <? if ( isset($_SESSION['message_red']) && !empty($_SESSION['message_red']) ): ?>
-                <div class="alert alert-danger" role="alert"><?=$_SESSION['message_red']?></div>
-                <? unset($_SESSION['message_red']); ?>
-            <? endif; ?>
-            <? if ( isset($_SESSION['message_green']) && !empty($_SESSION['message_green']) ): ?>
-                <div class="alert alert-success" role="alert"><?=$_SESSION['message_green']?></div>
-                <? unset($_SESSION['message_green']); ?>
-            <? endif; ?>
+            <div class="messages">
+                <? if ( isset($_SESSION['message_red']) && !empty($_SESSION['message_red']) ): ?>
+                    <div class="alert alert-danger" role="alert"><?=$_SESSION['message_red']?></div>
+                    <? unset($_SESSION['message_red']); ?>
+                <? endif; ?>
+                <? if ( isset($_SESSION['message_green']) && !empty($_SESSION['message_green']) ): ?>
+                    <div class="alert alert-success" role="alert"><?=$_SESSION['message_green']?></div>
+                    <? unset($_SESSION['message_green']); ?>
+                <? endif; ?>
+            </div>
 
             <?php include APP_PATH.'views/'.$content_view; ?>
         </div>

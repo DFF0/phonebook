@@ -196,7 +196,7 @@ class Phonebook extends Model
 
         try {
             $stmt = $db->query(
-                "SELECT * FROM Notebook WHERE user_id = :user_id",
+                "SELECT * FROM Notebook WHERE user_id = :user_id ORDER BY id desc",
                 [
                     'user_id' => $userId,
                 ]
@@ -246,6 +246,7 @@ class Phonebook extends Model
 
             $result = [
                 'success' => true,
+                'data' => $db->lastInsertId(),
             ];
 
         } catch (Exception $e) {
@@ -302,23 +303,20 @@ class Phonebook extends Model
     /**
      * удаляет запись по ид
      * @param int $id
+     * @param int $user_id
      * @return array
      */
-    public function delete($id)
+    public function delete($id, $user_id)
     {
         /** @var Db $db */
         $db = Db::getInstance();
 
         try {
             $db->query(
-                "INSERT INTO Notebook SET `email` = :email, `phone` = :phone, `user_id` = :user_id, `name` = :name, `surname` = :surname, `img` = :img",
+                "DELETE FROM Notebook WHERE id = :id AND user_id = :user_id",
                 [
-                    'email' => $data['email'],
-                    'phone' => $data['phone'],
-                    'user_id' => $data['user_id'],
-                    'name' => $data['name'],
-                    'surname' => $data['surname'],
-                    'img' => $data['img'],
+                    'id' => $id,
+                    'user_id' => $user_id
                 ]
             );
 
@@ -330,7 +328,7 @@ class Phonebook extends Model
             $result = [
                 'success' => false,
                 'error' => [
-                    'message' => 'Не удалось создать пользователя: ' . $e->getMessage(),
+                    'message' => 'Не удалось удалить пользователя: ' . $e->getMessage(),
                 ]
             ];
         }
