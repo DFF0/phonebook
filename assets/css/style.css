@@ -102,3 +102,17 @@ body {
 	padding-top: 10px;
 	border-top: solid 1px #e3e1e1;
 }
+
+.note-block {
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+	border-bottom: solid 1px #e3e1e1;
+}
+.note-block img {
+	width: 100%;
+	height: auto;
+}
+
+.note-block .btn {
+	line-height: 1;
+}
