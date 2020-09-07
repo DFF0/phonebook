@@ -206,4 +206,92 @@ class PhonebookController extends Controller
             return;
         }
     }
+
+    public function updateAction()
+    {
+        $result = [
+            'success' => false,
+            'error' => "",
+            'data' => '',
+        ];
+
+        $validEmail = $this->validateEmail($_POST['email'], 55);
+        if ( !$validEmail['success'] ) {
+            $result['success'] = false;
+            $result['error'] = $validEmail['error']['message'];
+            echo json_encode($result,JSON_UNESCAPED_UNICODE);
+            return;
+        }
+
+        $validPhone = $this->validateNumber($_POST['phone'], 'Телефон');
+        if ( !$validPhone['success'] ) {
+            $result['success'] = false;
+            $result['error'] = $validPhone['error']['message'];
+            echo json_encode($result,JSON_UNESCAPED_UNICODE);
+            return;
+        }
+
+        $validName = empty($_POST['name']);
+        if ( $validName ) {
+            $result['success'] = false;
+            $result['error'] = "Поле Имя обязательно для заполнения";
+            echo json_encode($result,JSON_UNESCAPED_UNICODE);
+            return;
+        }
+
+        $validId = empty($_POST['id']);
+        if ( $validId ) {
+            $result['success'] = false;
+            $result['error'] = "Не передан ИД";
+            echo json_encode($result,JSON_UNESCAPED_UNICODE);
+            return;
+        }
+
+        /** @var Phonebook $phonebook */
+        $phonebook = $this->model('Phonebook');
+
+        if ( isset($_FILES['uploadfile']) && !empty($_FILES['uploadfile']) ) {
+            $resultAddImg = $phonebook->saveFile($_FILES['uploadfile']);
+
+            if (!$resultAddImg['success']) {
+                $result['success'] = false;
+                $result['error'] = $validEmail['error']['message'];
+                echo json_encode($result,JSON_UNESCAPED_UNICODE);
+                return;
+            }
+
+            $img = $resultAddImg['data'];
+        } elseif ( isset($_POST['cur_img']) && !empty($_POST['cur_img']) ) {
+            $img = $_POST['cur_img'];
+        } else {
+            $img = '';
+        }
+
+        $data = [
+            'id' => $_POST['id'],
+            'email' => $_POST['email'],
+            'phone' => $_POST['phone'],
+            'name' => $_POST['name'],
+            'surname' => $_POST['surname'],
+            'img' => $img,
+            'user_id' => $_SESSION['user_auth']['id'],
+        ];
+
+        $resultUpdate = $phonebook->update($data);
+
+        if ( !$resultUpdate['success'] ) {
+            $result['success'] = false;
+            $result['error'] = $resultUpdate['error']['message'];
+            echo json_encode($result,JSON_UNESCAPED_UNICODE);
+            return;
+        } else {
+            $result['success'] = true;
+            $result['error'] = '';
+            $data['text_number'] = $phonebook->numberToString($_POST['phone']);
+            $result['data'] = $data;
+
+            echo json_encode($result,JSON_UNESCAPED_UNICODE);
+            return;
+        }
+    }
 }
