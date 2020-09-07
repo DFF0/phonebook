@@ -87,7 +87,7 @@ $(function ($) {
                     if (response.data.img !== '') {
                         img = response.data.user_id + '/' + response.data.img;
                     }
-                    $infoBlock.prepend('<div class="note-block row" data-id="' + response.data.id + '">\n' +
+                    $infoBlock.prepend('<div class="note-block row" data-id="' + response.data.id + '" data-name="' + response.data.name + '" data-surname="' + response.data.surname + '" data-email="' + response.data.email + '" data-phone="' + response.data.phone + '">\n' +
                         '                    <div class="col-sm-2">\n' +
                         '                        <img src="/user_image/' + img + '" alt="user">\n' +
                         '                    </div>\n' +
@@ -134,7 +134,32 @@ $(function ($) {
     });
 
     $filterBlock.on('change, keyup', 'input', function () {
-        console.log('filter');
+        var name = $filterBlock.find('input[name=filter_name]').val();
+        var surname = $filterBlock.find('input[name=filter_surname]').val();
+        var email = $filterBlock.find('input[name=filter_email]').val();
+        var phone = $filterBlock.find('input[name=filter_phone]').val();
+
+        var filter = '';
+
+        if ( name != '' ) {
+            filter += '[data-name*="' + name+'"]';
+        }
+        if ( surname != '' ) {
+            filter += '[data-surname*="' + surname+'"]';
+        }
+        if ( email != '' ) {
+            filter += '[data-email*="' + email+'"]';
+        }
+        if ( phone != '' ) {
+            filter += '[data-phone*="' + phone+'"]';
+        }
+
+        if ( filter !== '' ) {
+            $('.note-block').hide();
+            $('.note-block'+filter).show();
+        } else {
+            $('.note-block').show();
+        }
     });
 });
 
