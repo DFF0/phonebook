@@ -132,14 +132,27 @@ $(function ($) {
             }
         });
     });
+
+    $filterBlock.on('change, keyup', 'input', function () {
+        console.log('filter');
+    });
 });
 
 $(document).on('click', '.info-block .del', function () {
+    if (!confirm("Вы действительно хотите удалить запись?")) {
+        return false;
+    }
+
     var block = $(this).parents('.note-block');
     var id = block.data('id');
 
     var data = new FormData();
     data.append('id', id);
+    data.append('name',    '');
+    data.append('surname', '');
+    data.append('email',   '');
+    data.append('phone',   '');
+    data.append('uploadfile',    '');
 
     $.ajax({
         url         : '/phonebook/delete/',
@@ -155,6 +168,41 @@ $(document).on('click', '.info-block .del', function () {
             } else {
                 $('.messages').append('<div class="alert alert-danger" role="alert">'+response.error+'</div>');
             }
+        },
+        error: function( jqXHR, status, errorThrown ){
+            console.log( 'ОШИБКА AJAX запроса: ' + status, jqXHR );
+        }
+    });
+
+    return false;
+});
+
+$(document).on('click', '.info-block .edit', function () {
+    var block = $(this).parents('.note-block');
+    var id = block.data('id');
+
+    var data = new FormData();
+    data.append('id', id);
+
+    console.log('update ' + id);
+
+    $.ajax({
+        url         : '/phonebook/update/',
+        type        : 'POST',
+        contentType : false,
+        data        : data,
+        cache       : false,
+        dataType    : 'json',
+        processData : false,
+        success     : function( response, status, jqXHR ) {
+            if ( response.success ) {
+                console.log('update');
+            } else {
+                $('.messages').append('<div class="alert alert-danger" role="alert">'+response.error+'</div>');
+            }
+        },
+        error: function( jqXHR, status, errorThrown ){
+            console.log( 'ОШИБКА AJAX запроса: ' + status, jqXHR );
         }
     });
 

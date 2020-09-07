@@ -19,20 +19,20 @@
         <div>
             <div class="form-group row">
                 <div class="col-sm-6">
-                    <input type="text" placeholder="Имя" class="form-control" maxlength="55">
+                    <input type="text" placeholder="Имя" name="filter_name" class="form-control" maxlength="55">
                 </div>
                 <div class="col-sm-6">
-                    <input type="text" placeholder="Фамилия" maxlength="55" class="form-control">
+                    <input type="text" placeholder="Фамилия" name="filter_surname" maxlength="55" class="form-control">
                 </div>
             </div>
             <div class="form-group row">
                 <div class="col-sm-6">
-                    <input type="email" placeholder="Почта" maxlength="55" class="form-control">
+                    <input type="email" placeholder="Почта" name="filter_email" maxlength="55" class="form-control">
                 </div>
                 <div class="col-sm-6">
                     <div class="input-group">
                         <span class="input-group-addon">+7</span>
-                        <input type="text" placeholder="Телефон" maxlength="10" class="form-control number-only">
+                        <input type="text" placeholder="Телефон" name="filter_phone" maxlength="10" class="form-control number-only">
                     </div>
                 </div>
             </div>
