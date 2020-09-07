@@ -74,7 +74,7 @@
             Нет записей
         <? else: ?>
             <? foreach ($this->data['phonebookList'] as $row): ?>
-                <div class="note-block row" data-id="<?=$row['id']?>">
+                <div class="note-block row" data-id="<?=$row['id']?>" data-name="<?=$row['name']?>" data-surname="<?=$row['surname']?>" data-email="<?=$row['email']?>" data-phone="<?=$row['phone']?>">
                     <div class="col-sm-2">
                         <img src="<?=empty($row['img'])? '/user_image/unnamed.png' : '/user_image/' . $_SESSION['user_auth']['id'] . '/' . $row['img']?>" alt="user">
                     </div>
