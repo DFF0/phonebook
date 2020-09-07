@@ -253,7 +253,7 @@ class Phonebook extends Model
             $result = [
                 'success' => false,
                 'error' => [
-                    'message' => 'Не удалось создать пользователя: ' . $e->getMessage(),
+                    'message' => 'Не удалось создать запись: ' . $e->getMessage(),
                 ]
             ];
         }
@@ -273,15 +273,8 @@ class Phonebook extends Model
 
         try {
             $db->query(
-                "INSERT INTO Notebook SET `email` = :email, `phone` = :phone, `user_id` = :user_id, `name` = :name, `surname` = :surname, `img` = :img",
-                [
-                    'email' => $data['email'],
-                    'phone' => $data['phone'],
-                    'user_id' => $data['user_id'],
-                    'name' => $data['name'],
-                    'surname' => $data['surname'],
-                    'img' => $data['img'],
-                ]
+                "UPDATE Notebook SET `email` = :email, `phone` = :phone, `name` = :name, `surname` = :surname, `img` = :img WHERE `user_id` = :user_id AND `id` = :id",
+                $data
             );
 
             $result = [
@@ -292,7 +285,7 @@ class Phonebook extends Model
             $result = [
                 'success' => false,
                 'error' => [
-                    'message' => 'Не удалось создать пользователя: ' . $e->getMessage(),
+                    'message' => 'Не удалось обновить запись: ' . $e->getMessage(),
                 ]
             ];
         }
