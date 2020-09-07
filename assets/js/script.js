@@ -118,11 +118,12 @@ $(function ($) {
 
                     $('.messages').find('.alert-danger').remove();
 
-                    $(this).find('input[name=name]').val('');
-                    $(this).find('input[name=surname]').val('');
-                    $(this).find('input[name=email]').val('');
-                    $(this).find('input[name=phone]').val('');
+                    $addBlock.find('input[name=name]').val('');
+                    $addBlock.find('input[name=surname]').val('');
+                    $addBlock.find('input[name=email]').val('');
+                    $addBlock.find('input[name=phone]').val('');
                 } else {
+                    $('.messages').find('.alert-danger').remove();
                     $('.messages').append('<div class="alert alert-danger" role="alert">'+response.error+'</div>');
                 }
             },
@@ -190,6 +191,7 @@ $(document).on('click', '.info-block .del', function () {
             if ( response.success ) {
                 block.remove();
             } else {
+                $('.messages').find('.alert-danger').remove();
                 $('.messages').append('<div class="alert alert-danger" role="alert">'+response.error+'</div>');
             }
         },
@@ -222,6 +224,7 @@ $(document).on('click', '.info-block .edit', function () {
             if ( response.success ) {
                 console.log('update');
             } else {
+                $('.messages').find('.alert-danger').remove();
                 $('.messages').append('<div class="alert alert-danger" role="alert">'+response.error+'</div>');
             }
         },
