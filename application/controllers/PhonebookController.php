@@ -215,7 +215,7 @@ class PhonebookController extends Controller
             'data' => '',
         ];
 
-        $validEmail = $this->validateEmail($_POST['email'], 55);
+        $validEmail = $this->validateEmail(@$_POST['email'], 55);
         if ( !$validEmail['success'] ) {
             $result['success'] = false;
             $result['error'] = $validEmail['error']['message'];
@@ -223,7 +223,7 @@ class PhonebookController extends Controller
             return;
         }
 
-        $validPhone = $this->validateNumber($_POST['phone'], 'Телефон');
+        $validPhone = $this->validateNumber(@$_POST['phone'], 'Телефон');
         if ( !$validPhone['success'] ) {
             $result['success'] = false;
             $result['error'] = $validPhone['error']['message'];
@@ -231,7 +231,7 @@ class PhonebookController extends Controller
             return;
         }
 
-        $validName = empty($_POST['name']);
+        $validName = empty(@$_POST['name']);
         if ( $validName ) {
             $result['success'] = false;
             $result['error'] = "Поле Имя обязательно для заполнения";

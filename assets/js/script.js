@@ -81,7 +81,6 @@ $(function ($) {
             dataType    : 'json',
             processData : false,
             success     : function( response, status, jqXHR ) {
-                console.log(response);
                 if ( response.success ) {
                     var img = 'unnamed.png';
                     if (response.data.img !== '') {
